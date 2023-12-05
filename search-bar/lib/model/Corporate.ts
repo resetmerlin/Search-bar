@@ -8,7 +8,7 @@ const corporateSchema = new Schema({
     required: true,
   },
   종목코드: {
-    type: String,
+    type: Number,
     required: true,
     unique: true,
   },
@@ -41,8 +41,8 @@ const corporateSchema = new Schema({
     required: true,
   },
 });
-
 const Corporate =
-  mongoose.models.corporate || mongoose.model('corporate', corporateSchema);
+  mongoose.models.Corporate ||
+  mongoose.model('Corporate', corporateSchema, 'search');
 
 export default Corporate;
