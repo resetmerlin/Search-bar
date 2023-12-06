@@ -12,13 +12,11 @@ import { ICorporate, ICorporates } from '@/lib/types/dto';
 
 export default function Home() {
   const [search, setSearch] = useState('');
-  const [corporates, setCorporates] = useState<ICorporates | null>([]);
+  const [corporates, setCorporates] = useState<ICorporates | null>(null);
 
   const handleSearch = useDebounce((term) => {
     setSearch(term);
   }, 700);
-
-  console.log(search);
 
   const searchHandler = (e: React.FormEvent<HTMLInputElement>) => {
     const term = e.currentTarget.value;
@@ -37,13 +35,17 @@ export default function Home() {
           .slice(0, 5);
 
       setCorporates(filteredData);
+    } else {
+      setCorporates(null);
     }
   }, [search]);
 
   return (
     <>
       <SearchBar searchHandler={searchHandler}>
-        <SearchDropDownContainer>
+        <SearchDropDownContainer
+          className={!search ? 'opacity-0' : 'opacity-100'}
+        >
           {corporates &&
             corporates.map((corporate: ICorporate) => (
               <SearchDropDown
