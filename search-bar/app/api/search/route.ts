@@ -14,7 +14,15 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       );
     }
 
+    if (title.length === 0) {
+      return NextResponse.json(
+        { error: 'Please type titile' },
+        { status: 400 }
+      );
+    }
+    // Reason for this RegExp => to Enhance UX
     const query = { 회사명: new RegExp(title, 'i') };
+
     const corporates = await Corporate.find(query);
 
     return NextResponse.json(corporates);
