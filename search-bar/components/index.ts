@@ -1,2 +1,1 @@
-export * from './searchBar';
-export * from './searchDropdown';
+export * from './search';
