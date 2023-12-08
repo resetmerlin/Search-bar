@@ -1,7 +1,7 @@
 'use client';
 
 import { Search } from '@/components';
-import { useHomeHook } from './page.hook';
+import { useSearchHook } from './hooks';
 
 export default function Home() {
   const [
@@ -11,7 +11,7 @@ export default function Home() {
     getValueOfDropDown,
     fiveCorporates,
     goCorporatepage
-  ] = useHomeHook();
+  ] = useSearchHook();
 
   return (
     <Search
