@@ -10,7 +10,8 @@ import {
   SearchDropDownContainer
 } from '@/components';
 import { ICorporate } from '@/lib';
-import { useDebounce } from './hooks';
+import { useAppDispatch, useAppSelector, useDebounce } from './hooks';
+import { bTrieAdded, selectBTrie } from '@/lib/features';
 
 async function updateCorporates(url: string, { arg }: { arg: string }) {
   return axios.get(url + arg).then((res) => res.data);
@@ -27,6 +28,11 @@ export default function Home() {
   /** Extract 5 datas for Search Dropdown*/
   const fiveCorporates = useMemo(() => {
     return data && [...data].slice(0, 5);
+  }, [data]);
+
+  /** Array only with corporate title */
+  const onlyCorprateTitle = useMemo(() => {
+    return data && [...data].map((corporate: ICorporate) => corporate.회사명);
   }, [data]);
 
   /** Use debounce for setting a search terms*/
@@ -62,22 +68,36 @@ export default function Home() {
     };
   }, [trigger, search]);
 
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    let ignore = false;
+    if (onlyCorprateTitle?.length > 0 && !ignore) {
+      dispatch(bTrieAdded(onlyCorprateTitle));
+    }
+    return () => {
+      ignore = true;
+    };
+  }, [dispatch, onlyCorprateTitle]);
+
+  const name = useAppSelector(selectBTrie);
+
+  console.log(name);
+
   return (
-    <>
-      <SearchBar searchHandler={searchHandler} ref={searchRef}>
-        <SearchDropDownContainer
-          className={!search ? 'opacity-0' : 'opacity-100'}
-        >
-          {fiveCorporates &&
-            fiveCorporates.map((corporate: ICorporate) => (
-              <SearchDropDown
-                getValueOfDropDown={getValueOfDropDown}
-                회사명={corporate.회사명}
-                key={corporate.종목코드}
-              />
-            ))}
-        </SearchDropDownContainer>
-      </SearchBar>
-    </>
+    <SearchBar searchHandler={searchHandler} ref={searchRef}>
+      <SearchDropDownContainer
+        className={!search ? 'opacity-0' : 'opacity-100'}
+      >
+        {fiveCorporates &&
+          fiveCorporates.map((corporate: ICorporate) => (
+            <SearchDropDown
+              getValueOfDropDown={getValueOfDropDown}
+              회사명={corporate.회사명}
+              key={corporate.종목코드}
+            />
+          ))}
+      </SearchDropDownContainer>
+    </SearchBar>
   );
 }
