@@ -2,12 +2,13 @@ import React, { PropsWithChildren, forwardRef } from 'react';
 
 type IProps = {
   searchHandler: (e: React.FormEvent<HTMLInputElement>) => void;
+  goCorporatepage: (e: React.FormEvent<HTMLFormElement>) => void;
 };
 
 export default forwardRef<HTMLInputElement, PropsWithChildren<IProps>>(
-  function SearchBar({ searchHandler, children }, ref) {
+  function SearchBar({ searchHandler, goCorporatepage, children }, ref) {
     return (
-      <form className="w-96 	relative h-20	">
+      <form className="w-96 	relative h-20" onSubmit={goCorporatepage}>
         <label
           htmlFor="default-search"
           className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -35,7 +36,7 @@ export default forwardRef<HTMLInputElement, PropsWithChildren<IProps>>(
           <input
             ref={ref}
             type="search"
-            id="default-search"
+            id="search"
             className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Search Corporate"
             onChange={searchHandler}
