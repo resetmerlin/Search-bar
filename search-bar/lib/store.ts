@@ -1,8 +1,12 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { bTrieSlice } from './features';
 
 export const makeStore = () => {
+  const reducer = combineReducers({
+    bTrie: bTrieSlice.reducer
+  });
   return configureStore({
-    reducer: {}
+    reducer
   });
 };
 
