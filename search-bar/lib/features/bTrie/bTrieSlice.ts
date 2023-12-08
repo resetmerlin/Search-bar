@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { stat } from 'fs';
 
 class TrieNode {
   public child;
@@ -64,9 +63,11 @@ export const bTrieSlice = createSlice({
   reducers: {
     bTrieAdded(state, action) {
       const brTieArr = action.payload;
-      for (const val of brTieArr) {
-        state.trie.insert(val);
-      }
+
+      if (brTieArr)
+        for (const val of brTieArr) {
+          state.trie.insert(val);
+        }
     },
     bTrieSearch(state, action) {
       const str = action.payload;
