@@ -6,12 +6,19 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 import { useAppDispatch, useDebounce } from './hooks';
-import { AppDispatch, ICorporate, bTrieAdded } from '@/lib';
+import { AppDispatch, ICorporate, ICorporates, bTrieAdded } from '@/lib';
 
 async function updateCorporates(url: string, { arg }: { arg: string }) {
   return axios.get(url + arg).then((res) => res.data);
 }
-export const useHomeHook = () => {
+export const useHomeHook = (): [
+  searchHandler: (e: React.FormEvent<HTMLInputElement>) => void,
+  searchRef: RefObject<HTMLInputElement>,
+  search: string,
+  getValueOfDropDown: (e: React.MouseEvent<HTMLButtonElement>) => void,
+  fiveCorporates: ICorporates,
+  goCorporatepage: (e: React.FormEvent<HTMLFormElement>) => void
+] => {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
