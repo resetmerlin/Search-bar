@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  SearchBar,
-  SearchDropDown,
-  SearchDropDownContainer
-} from '@/components';
-import { ICorporate } from '@/lib';
+import { Search } from '@/components';
 import { useHomeHook } from './page.hook';
 
 export default function Home() {
@@ -19,23 +14,13 @@ export default function Home() {
   ] = useHomeHook();
 
   return (
-    <SearchBar
+    <Search
       searchHandler={searchHandler}
       ref={searchRef}
+      search={search}
+      getValueOfDropDown={getValueOfDropDown}
+      fiveCorporates={fiveCorporates}
       goCorporatepage={goCorporatepage}
-    >
-      <SearchDropDownContainer
-        className={!search ? 'opacity-0' : 'opacity-100'}
-      >
-        {fiveCorporates &&
-          fiveCorporates.map((corporate: ICorporate) => (
-            <SearchDropDown
-              getValueOfDropDown={getValueOfDropDown}
-              회사명={corporate.회사명}
-              key={corporate.종목코드}
-            />
-          ))}
-      </SearchDropDownContainer>
-    </SearchBar>
+    />
   );
 }
