@@ -1,14 +1,32 @@
 'use client';
 
 import { useAppSelector, useSearchHook } from '@/app/hooks';
-import { Search } from '@/components';
+import { CorporateTable, Search } from '@/components';
 import { selectBTrie } from '@/lib';
+import axios from 'axios';
 import { useParams } from 'next/navigation';
-import React from 'react';
+import React, { useEffect } from 'react';
+import useSWRMutation from 'swr/mutation';
+
+async function updateCorporates(url: string, { arg }: { arg: string }) {
+  return axios.get(url + arg).then((res) => res.data);
+}
 
 export default function Corporate() {
   const { slug } = useParams();
   const code = slug[0];
+
+  const { trigger, data } = useSWRMutation(
+    '/api/search/corporate?code=',
+    updateCorporates
+  );
+  const corporate = data && data[0];
+
+  useEffect(() => {
+    if (code) {
+      trigger(`${code}`);
+    }
+  }, [trigger, code]);
 
   const { trie } = useAppSelector(selectBTrie);
 
@@ -22,7 +40,7 @@ export default function Corporate() {
   ] = useSearchHook();
 
   return (
-    <div>
+    <section>
       <Search
         searchHandler={searchHandler}
         ref={searchRef}
@@ -31,6 +49,8 @@ export default function Corporate() {
         fiveCorporates={fiveCorporates}
         goCorporatepage={goCorporatepage}
       />
-    </div>
+
+      <CorporateTable corporate={corporate} />
+    </section>
   );
 }
