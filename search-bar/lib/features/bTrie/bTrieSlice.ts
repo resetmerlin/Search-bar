@@ -55,6 +55,29 @@ class Trie {
 
     return true;
   }
+  findWordsWithPrefix(prefix: string) {
+    let current: { child: any; end: boolean } = this.root;
+    for (let char of prefix) {
+      if (!current.child[char]) {
+        return [];
+      }
+      current = current.child[char];
+    }
+    return this._findWords(current, prefix);
+  }
+
+  _findWords(node: { child: any; end: boolean }, prefix: string): string[] {
+    let results = [];
+    if (node.end) {
+      results.push(prefix);
+    }
+    for (let char in node.child) {
+      results = results.concat(
+        this._findWords(node.child[char], prefix + char)
+      );
+    }
+    return results;
+  }
 }
 
 export const bTrieSlice = createSlice({
@@ -73,13 +96,15 @@ export const bTrieSlice = createSlice({
       const str = action.payload;
       state.searchTerms = state.trie.search(str);
     },
-    bTrieStartsWith(state, action) {
-      state;
+    bTrieFindWords(state, action) {
+      const str: string = action.payload;
+      console.log(str);
+      if (str.length) state.startTerm = state.trie.findWordsWithPrefix(str);
     }
   }
 });
 
-export const { bTrieAdded, bTrieSearch } = bTrieSlice.actions;
+export const { bTrieAdded, bTrieSearch, bTrieFindWords } = bTrieSlice.actions;
 export const selectBTrie = (state: any) => state.bTrie;
 
 export default bTrieSlice.reducer;
