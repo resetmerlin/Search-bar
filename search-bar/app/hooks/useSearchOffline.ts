@@ -1,17 +1,19 @@
 'use client';
 
 import { RefObject, useEffect, useMemo, useRef, useState } from 'react';
-import useSWRMutation from 'swr/mutation';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 
-import { useAppDispatch, useDebounce } from '.';
-import { AppDispatch, ICorporate, ICorporates, bTrieAdded } from '@/lib';
+import { useAppDispatch, useAppSelector, useDebounce } from '.';
+import {
+  AppDispatch,
+  ICorporate,
+  ICorporates,
+  bTrieAdded,
+  bTrieFindWords,
+  selectBTrie
+} from '@/lib';
 
-async function updateCorporates(url: string, { arg }: { arg: string }) {
-  return axios.get(url + arg).then((res) => res.data);
-}
-export const useSearchHook = (): [
+export const useSearchOfflineHook = (): [
   searchHandler: (e: React.FormEvent<HTMLInputElement>) => void,
   searchRef: RefObject<HTMLInputElement>,
   search: string,
@@ -21,27 +23,25 @@ export const useSearchHook = (): [
 ] => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-
-  const { trigger, data } = useSWRMutation(
-    '/api/search?title=',
-    updateCorporates
-  );
+  const { startTerm: data } = useAppSelector(selectBTrie);
 
   const [search, searchRef, searchHandler, getValueOfDropDown] = useSearch();
 
   /** Extract 5 datas for Search Dropdown*/
   const fiveCorporates = useMemo(() => {
-    return data && [...data].slice(0, 5);
+    return (
+      data &&
+      [...data].slice(0, 5).map((corporate) => {
+        return {
+          회사명: corporate
+        };
+      })
+    );
   }, [data]);
 
-  /** Array only with corporate title */
-  const onlyCorprateTitle = useMemo(() => {
-    return data && [...data].map((corporate: ICorporate) => corporate.회사명);
-  }, [data]);
+  console.log(fiveCorporates);
 
-  useFetchCorporates(search, trigger);
-
-  useAddTitleOnStore(onlyCorprateTitle, dispatch);
+  useFetchCorporates(search, dispatch);
 
   const goCorporatepage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,19 +63,6 @@ export const useSearchHook = (): [
     fiveCorporates,
     goCorporatepage
   ];
-};
-
-/** Hook for passively fetching corporates based on search input */
-const useFetchCorporates = (search: string, trigger: any) => {
-  useEffect(() => {
-    let ignore = false;
-    if (search.length > 0 && !ignore) {
-      trigger(search);
-    }
-    return () => {
-      ignore = true;
-    };
-  }, [trigger, search]);
 };
 
 /** Hooks for Search related */
@@ -113,18 +100,16 @@ const useSearch = (): [
   return [search, searchRef, searchHandler, getValueOfDropDown];
 };
 
-/** Hooks for dispatch corporate title lists*/
-const useAddTitleOnStore = (
-  onlyCorprateTitle: string[],
-  dispatch: AppDispatch
-) => {
+/** Hook for passively fetching corporates based on search input */
+const useFetchCorporates = (search: string, dispatch: AppDispatch) => {
+  console.log(search);
   useEffect(() => {
     let ignore = false;
-    if (onlyCorprateTitle?.length > 0 && !ignore) {
-      dispatch(bTrieAdded(onlyCorprateTitle));
+    if (search.length > 0 && !ignore) {
+      dispatch(bTrieFindWords(search));
     }
     return () => {
       ignore = true;
     };
-  }, [dispatch, onlyCorprateTitle]);
+  }, [dispatch, search]);
 };
