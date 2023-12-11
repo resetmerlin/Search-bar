@@ -46,7 +46,6 @@ export const useSearchHook = (): [
   const goCorporatepage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (data.length !== 1 && search.length === 0) return null;
-    console.log(data);
 
     const target = e.target as typeof e.target & {
       search: { value: string };
