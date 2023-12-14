@@ -5,8 +5,8 @@ import useSWRMutation from 'swr/mutation';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
-import { useAppDispatch, useDebounce } from '.';
-import { AppDispatch, ICorporate, ICorporates, bTrieAdded } from '@/lib';
+import { useDebounce } from '.';
+import { ICorporate, ICorporates } from '@/lib';
 
 async function updateCorporates(url: string, { arg }: { arg: string }) {
   return axios.get(url + arg).then((res) => res.data);
@@ -20,7 +20,6 @@ export const useSearchHook = (): [
   goCorporatepage: (e: React.FormEvent<HTMLFormElement>) => void
 ] => {
   const router = useRouter();
-  const dispatch = useAppDispatch();
 
   const { trigger, data } = useSWRMutation(
     '/api/search?title=',
@@ -34,14 +33,7 @@ export const useSearchHook = (): [
     return data && [...data].slice(0, 5);
   }, [data]);
 
-  /** Array only with corporate title */
-  const onlyCorprateTitle = useMemo(() => {
-    return data && [...data].map((corporate: ICorporate) => corporate.회사명);
-  }, [data]);
-
   useFetchCorporates(search, trigger);
-
-  useAddTitleOnStore(onlyCorprateTitle, dispatch);
 
   const goCorporatepage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -111,20 +103,4 @@ const useSearch = (): [
   };
 
   return [search, searchRef, searchHandler, getValueOfDropDown];
-};
-
-/** Hooks for dispatch corporate title lists*/
-const useAddTitleOnStore = (
-  onlyCorprateTitle: string[],
-  dispatch: AppDispatch
-) => {
-  useEffect(() => {
-    let ignore = false;
-    if (onlyCorprateTitle?.length > 0 && !ignore) {
-      dispatch(bTrieAdded(onlyCorprateTitle));
-    }
-    return () => {
-      ignore = true;
-    };
-  }, [dispatch, onlyCorprateTitle]);
 };
