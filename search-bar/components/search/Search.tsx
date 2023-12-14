@@ -1,29 +1,25 @@
-import React, { forwardRef } from 'react';
-import { ICorporate, ICorporates } from '@/lib';
+'use client';
+
+import React from 'react';
+import { ICorporate } from '@/lib';
 import { SearchBar } from './searchBar';
 import { SearchDropDown, SearchDropDownContainer } from './searchDropdown';
+import { useSearchHook } from '@/app/hooks';
 
-type IProps = {
-  searchHandler: (e: React.FormEvent<HTMLInputElement>) => void;
-  goCorporatepage: (e: React.FormEvent<HTMLFormElement>) => void;
-  search: string;
-  fiveCorporates: ICorporates;
-  getValueOfDropDown: (e: React.MouseEvent<HTMLButtonElement>) => void;
-};
-export default forwardRef<HTMLInputElement, IProps>(function Search(
-  {
+export default function Search() {
+  const [
     searchHandler,
+    searchRef,
     search,
-    fiveCorporates,
     getValueOfDropDown,
+    fiveCorporates,
     goCorporatepage
-  },
-  ref
-) {
+  ] = useSearchHook();
+
   return (
     <SearchBar
       searchHandler={searchHandler}
-      ref={ref}
+      ref={searchRef}
       goCorporatepage={goCorporatepage}
     >
       <SearchDropDownContainer
@@ -40,4 +36,4 @@ export default forwardRef<HTMLInputElement, IProps>(function Search(
       </SearchDropDownContainer>
     </SearchBar>
   );
-});
+}
