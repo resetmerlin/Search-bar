@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  useAppDispatch,
-  useAppSelector,
-  useSearchOfflineHook
-} from '@/app/hooks';
 import { CorporateTable, Search } from '@/components';
-import { bTrieFindWords, selectBTrie } from '@/lib';
 import axios from 'axios';
 import { useParams } from 'next/navigation';
 import React, { useEffect } from 'react';
@@ -32,27 +26,9 @@ export default function Corporate() {
     }
   }, [trigger, code]);
 
-  const { trie, startTerm } = useAppSelector(selectBTrie);
-
-  const [
-    searchHandler,
-    searchRef,
-    search,
-    getValueOfDropDown,
-    fiveCorporates,
-    goCorporatepage
-  ] = useSearchOfflineHook();
-
   return (
     <section>
-      <Search
-        searchHandler={searchHandler}
-        ref={searchRef}
-        search={search}
-        getValueOfDropDown={getValueOfDropDown}
-        fiveCorporates={fiveCorporates}
-        goCorporatepage={goCorporatepage}
-      />
+      <Search />
 
       <CorporateTable corporate={corporate} />
     </section>
